@@ -5,16 +5,17 @@
 <title>部落格</title>
 <meta charset="utf-8">
 <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
-<link rel="styleshhet" href="{% static 'article/css/article.css' %}">
+<link rel="stylesheet" href="{% static 'article/css/article.css' %}">
 
 </head>
 <body>
 {% include 'main/menu.html' %}
 <h2>歡迎來到我的部落格</h2>
-<br> 
+{% include 'main/messages.html' %}
+<p><a class="btn" href="{% url 'article:articleCreate' %}">新增文章</a></p>
 {% for article, comments in articles.items %}
   <h3>{{ article.title }}</h3>
-  <p>發表時間：{{ article.pubDateTime|date:'Y-m-d H:i' }}</p>
+  <h3><a href="{% url 'article:articleRead' article.id %}">{{ article.title }}</a></h3>
   <div class="articleContent">{{ article.content|linebreaks|truncatechars_html:30 }}</div>
   {% for comment in comments %}
     <div class="commentDiv">
