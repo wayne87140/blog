@@ -24,6 +24,8 @@ SECRET_KEY = '5b!08@$sjgk@)_2!*n$$h&&(78+la0pt1%)k3j(c637yt+kwh)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+if 'DYNO' in os.environ:    # Running on Heroku
+    DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -76,16 +78,26 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'blogdb',
-        'USER': 'blog',
-        'PASSWORD': 'blog',
-        'HOST': 'localhost',
-        'PORT': '',
+
+if DEBUG:   # Running on the development environment
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'blogdb',
+            'USER': 'blog',
+            'PASSWORD': 'blog',
+            'HOST': 'localhost',
+            'PORT': '',
+        }
     }
-}
+
+else:   # Running on Heroku
+    # Parse database configuration from $DATABASE_URL
+    import dj_database_url
+    DATABASES = {'default':dj_database_url.config()}
+    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
 
 
 # Password validation
@@ -129,3 +141,6 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'account.User'
 
 LOGIN_URL = '/account/login/'
+
+# For Heroku deployment
+STATIC_ROOT = 'staticfiles'
